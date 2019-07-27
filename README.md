@@ -9,12 +9,12 @@ caso ele não esteja instalado, siga o tutorial do próprio site: [Maven install
 
 ## Tecnologias
 
- - [`Spring boot`](https://spring.io) - Framework base para a API
- - [`PostgreSQL`](https://www.postgresql.org/) - Banco de dados
+ - [`Spring boot 2.1.6.RELEASE`](https://spring.io) - Framework base para a API
+ - [`PostgreSQL 11.4`](https://www.postgresql.org/) - Banco de dados
  - [`Swagger`](https://swagger.io) - Documentação de API de forma dinâmica
  - [`JPA/Hibernate`](https://hibernate.org/orm/) - Framework para persistencia de dados / ORM
- - [`Docker`](https://www.docker.com) - Executa e gerencia aplicações dentro de invólucros chamados containers
- - [`RabbitMQ`](https://www.rabbitmq.com) - RabbitMQ é um broker de mensageria
+ - [`Docker Community 18.09.2`](https://www.docker.com) - Executa e gerencia aplicações dentro de invólucros chamados containers
+ - [`RabbitMQ 3.7.16`](https://www.rabbitmq.com) - RabbitMQ é um broker de mensageria
  - [`jUnit5 e Mockito`](https://junit.org/junit5/) - Execução de testes
 
 ### Contribuição
