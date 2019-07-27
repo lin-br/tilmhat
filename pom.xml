@@ -20,7 +20,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <postgresql.version>42.2.5</postgresql.version>
         <springframework.boot.version>2.1.6.RELEASE</springframework.boot.version>
-        <springframework.security.test>5.1.5.RELEASE</springframework.security.test>
+        <springframework.security.test.version>5.1.5.RELEASE</springframework.security.test.version>
+        <h2database.version>1.4.199</h2database.version>
     </properties>
 
     <dependencies>
@@ -55,7 +56,13 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <version>${springframework.security.test}</version>
+            <version>${springframework.security.test.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2database.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
