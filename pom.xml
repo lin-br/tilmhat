@@ -22,6 +22,7 @@
         <springframework.boot.version>2.1.6.RELEASE</springframework.boot.version>
         <springframework.security.test.version>5.1.5.RELEASE</springframework.security.test.version>
         <h2database.version>1.4.199</h2database.version>
+        <junit-jupiter.version>5.3.2</junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -64,6 +65,17 @@
             <artifactId>h2</artifactId>
             <version>${h2database.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>${springframework.boot.version}</version>
         </dependency>
     </dependencies>
 
