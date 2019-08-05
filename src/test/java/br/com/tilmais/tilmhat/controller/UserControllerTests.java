@@ -23,7 +23,7 @@ import java.net.URI;
 
 
 @WebMvcTest(controllers = UserController.class)
-class UserEntityControllerTests {
+class UserControllerTests {
 
     @Autowired
     private ObjectMapper objectMapper;

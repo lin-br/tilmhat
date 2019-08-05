@@ -19,7 +19,7 @@ import java.net.URI;
 
 @SpringBootTest
 @ActiveProfiles(ApplicationConstants.PROFILE_TEST)
-class UserEntityServiceTests {
+class UserServiceTests {
 
     @Autowired
     UserService userService;

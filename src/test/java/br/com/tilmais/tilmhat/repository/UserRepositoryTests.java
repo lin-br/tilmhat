@@ -10,7 +10,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @ActiveProfiles(ApplicationConstants.PROFILE_TEST)
-class UserEntityRepositoryTests {
+class UserRepositoryTests {
 
     @Autowired
     private UserRepository repository;
