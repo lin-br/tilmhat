@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = ApplicationProperties.class)
-class ApplicationPropertiesTests {
+class ApplicationPropertiesTest {
 
     @Autowired
     ApplicationProperties applicationProperties;
@@ -15,5 +15,6 @@ class ApplicationPropertiesTests {
     void should_Populate_ApplicationProperties() {
         Assertions.assertThat(this.applicationProperties.getName()).isNotNull();
         Assertions.assertThat(this.applicationProperties.getVersion()).isNotNull();
+        Assertions.assertThat(this.applicationProperties.getToken().getKey()).isNotNull();
     }
 }

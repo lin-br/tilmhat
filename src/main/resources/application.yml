@@ -1,6 +1,12 @@
 application:
   name: @project.name@
   version: @project.version@
+  token:
+    durationInMilliseconds: 300_000
+    key: "txp2wk99k6UKGM9Lr+DX29v0lntp9RTwQUiv+ZzOYoA="
+    header: "Authorization"
+    prefix: "Bearer"
+    claimsName: "license"
 
 server:
   servlet:
@@ -16,7 +22,7 @@ spring:
   profiles: dev
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

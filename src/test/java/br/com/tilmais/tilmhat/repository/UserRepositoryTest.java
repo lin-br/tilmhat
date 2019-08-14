@@ -10,7 +10,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @ActiveProfiles(ApplicationConstants.PROFILE_TEST)
-class UserRepositoryTests {
+class UserRepositoryTest {
 
     @Autowired
     private UserRepository repository;
@@ -24,5 +24,12 @@ class UserRepositoryTests {
     @Sql(statements = "INSERT INTO users (id, name, password) VALUES (1, 'Joana', '123456789')")
     void whenInitialized_thenFindById() {
         Assertions.assertThat(this.repository.findById(1L).get().getName()).isEqualTo("Joana");
+    }
+
+    @Test
+    @Sql(statements = "INSERT INTO users (id, name, password) VALUES (1, 'Test find user by name', 'from one to nine')")
+    void should_FindUserByName() {
+        Assertions.assertThat(this.repository.findByName("Test find user by name")
+                .getPassword()).isEqualTo("from one to nine");
     }
 }

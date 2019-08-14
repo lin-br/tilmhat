@@ -120,17 +120,4 @@ public final class UserEntity {
         this.deleted_at = deleted_at;
     }
 
-    @Override
-    public String toString() {
-        return "UserEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", situation=" + situation +
-                ", type=" + type +
-                ", created_at=" + created_at +
-                ", modified_at=" + modified_at +
-                ", deleted_at=" + deleted_at +
-                '}';
-    }
 }
