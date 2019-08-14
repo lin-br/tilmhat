@@ -21,9 +21,9 @@ import java.util.Optional;
 class UserServiceTest {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    UserRequestDTO requestDTO;
+    private UserRequestDTO requestDTO;
 
     @Autowired
     UserService userService;
@@ -32,7 +32,6 @@ class UserServiceTest {
     void setup() {
         this.requestDTO = new UserRequestDTO();
         this.requestDTO.setName("Register UserEntity");
-//        this.requestDTO.setPassword("from one to nine");
         this.requestDTO.setPassword("123456789");
         this.requestDTO.setType(TypeUser.COMMON);
     }
