@@ -1,14 +1,12 @@
 package br.com.tilmais.tilmhat.entity;
 
+import br.com.tilmais.tilmhat.util.ManipulateClassWithReflection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 class UserEntityBuilderTest {
 
@@ -28,18 +26,12 @@ class UserEntityBuilderTest {
                 .setParent(parent)
                 .build();
 
-        final Method[] declaredMethods = UserEntity.class.getDeclaredMethods();
-        final List<Method> methods = Arrays.asList(declaredMethods);
+        final List<Method> allGettersPublic =
+                ManipulateClassWithReflection.getAllGettersPublic(UserEntity.class);
 
-        methods.stream().filter(method -> method.getModifiers() == Modifier.PUBLIC).forEach(method -> {
-            try {
-                final Object object = method.invoke(userEntity);
+        final List<Object> allValuesFromMethods =
+                ManipulateClassWithReflection.getAllValuesFromMethods(allGettersPublic, userEntity);
 
-                if (object instanceof Optional) Assertions.assertTrue(((Optional) object).isPresent());
-                Assertions.assertNotNull(object);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        allValuesFromMethods.forEach(Assertions::assertNotNull);
     }
 }
