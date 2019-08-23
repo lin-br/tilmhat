@@ -7,11 +7,12 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class UserMapper {
 
-    public static UserEntity entityFromRequestDTO(UserRequestDTO dto) {
+    public static UserEntity entityFromRequestDTO(UserRequestDTO dto, UserEntity parent) {
         return UserEntityBuilder.builder()
                 .setName(dto.getName())
                 .setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt()))
                 .setType(dto.getType())
+                .setParent(parent)
                 .build();
     }
 }

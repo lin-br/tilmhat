@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 
 @SpringBootTest
@@ -48,9 +49,6 @@ class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private String token;
-    private UserRequestDTO userRequestDTO;
-
     private String makeRequestLoginAndGetToken(LoginRequestDTO loginRequestDTO) throws Exception {
         final MockHttpServletRequestBuilder mockRequestLogin = MockMvcRequestBuilders
                 .post(ApplicationConstants.AUTHENTICATION_PATH)
@@ -64,32 +62,58 @@ class UserControllerTest {
                 .getHeader(HttpHeaders.AUTHORIZATION);
     }
 
-    private MockHttpServletRequestBuilder mountRequest(UserRequestDTO userRequestDTO) throws Exception {
+    private MockHttpServletRequestBuilder mountRequest(UserRequestDTO userRequestDTO, String token) throws Exception {
         return MockMvcRequestBuilders
                 .post(UserController.PATH_PARENT)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header(HttpHeaders.AUTHORIZATION, this.token)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .content(objectMapper.writeValueAsString(userRequestDTO));
     }
 
-    @BeforeEach
-    void setup() throws Exception {
-        this.userRequestDTO = new UserRequestDTO();
-        this.userRequestDTO.setName("Testing user controller");
-        this.userRequestDTO.setPassword("123456789");
-        this.userRequestDTO.setType(TypeUser.ADMINISTRATOR);
-
-        final UserEntity test = UserEntityBuilder.builder()
-                .setName("test")
-                .setPassword(BCrypt.hashpw("123456789", BCrypt.gensalt()))
-                .build();
-        this.userRepository.save(test);
-
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
-        loginRequestDTO.setLogin("test");
+    private LoginRequestDTO getAdministratorLoginRequestDTO() {
+        final LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
+        loginRequestDTO.setLogin("administrator");
         loginRequestDTO.setPassword("123456789");
+        return loginRequestDTO;
+    }
 
-        this.token = this.makeRequestLoginAndGetToken(loginRequestDTO);
+    private LoginRequestDTO getCommonLoginRequestDTO() {
+        final LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
+        loginRequestDTO.setLogin("common");
+        loginRequestDTO.setPassword("123456789");
+        return loginRequestDTO;
+    }
+
+    private LoginRequestDTO getMasterLoginRequestDTO() {
+        final LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
+        loginRequestDTO.setLogin("master");
+        loginRequestDTO.setPassword("123456789");
+        return loginRequestDTO;
+    }
+
+    @BeforeEach
+    void setup() {
+        final UserEntity administrator = UserEntityBuilder.builder()
+                .setName("administrator")
+                .setPassword(BCrypt.hashpw("123456789", BCrypt.gensalt()))
+                .setType(TypeUser.ADMINISTRATOR)
+                .build();
+
+        final UserEntity master = UserEntityBuilder.builder()
+                .setName("master")
+                .setPassword(BCrypt.hashpw("123456789", BCrypt.gensalt()))
+                .setType(TypeUser.MASTER)
+                .build();
+
+        final UserEntity common = UserEntityBuilder.builder()
+                .setName("common")
+                .setPassword(BCrypt.hashpw("123456789", BCrypt.gensalt()))
+                .setType(TypeUser.COMMON)
+                .build();
+
+        this.userRepository.save(administrator);
+        this.userRepository.save(master);
+        this.userRepository.save(common);
     }
 
     @AfterEach
@@ -98,25 +122,38 @@ class UserControllerTest {
     }
 
     @Test
-    void should_MakeRequestWithoutToken_And_GetResponseWith_UnauthorizedStatus() throws Exception {
+    void shouldMakeRequestWithoutTokenAndGetResponseWithUnauthorizedStatus() throws Exception {
+        final UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setName("master");
+        userRequestDTO.setPassword("123456789");
+        userRequestDTO.setType(TypeUser.MASTER);
+
         final ResultMatcher unauthorized = MockMvcResultMatchers.status().isUnauthorized();
 
         final MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(UserController.PATH_PARENT)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(this.objectMapper.writeValueAsString(this.userRequestDTO));
+                .content(this.objectMapper.writeValueAsString(userRequestDTO));
 
         this.mockMvc.perform(request).andExpect(unauthorized);
     }
 
     @Test
-    void should_RegisterUser_And_ReceiveResponseStatus201() throws Exception {
-        ResultMatcher resultMatcher = MockMvcResultMatchers.status().isCreated();
-        this.mockMvc.perform(this.mountRequest(this.userRequestDTO)).andExpect(resultMatcher);
-    }
+    void shouldMakeRequestAsAdministratorRegisterMasterAndReceiveResponseStatus201WithHeaderLocation() throws Exception {
+        final UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setName("master");
+        userRequestDTO.setPassword("123456789");
+        userRequestDTO.setType(TypeUser.MASTER);
 
-    @Test
-    void should_RegisterUser_And_ReceiveHeaderLocationWithId() throws Exception {
+        final String token = this.makeRequestLoginAndGetToken(this.getAdministratorLoginRequestDTO());
+
+        final ResultMatcher resultMatcherStatus = MockMvcResultMatchers
+                .status()
+                .isCreated();
+        final ResultMatcher resultMatcherHeader = MockMvcResultMatchers
+                .header()
+                .stringValues(HttpHeaders.LOCATION, "http://localhost/users/1");
+
         final URI uri = UriComponentsBuilder.newInstance()
                 .scheme("http")
                 .host("localhost")
@@ -124,19 +161,88 @@ class UserControllerTest {
                 .build()
                 .toUri();
 
-        final ResultMatcher resultMatcher = MockMvcResultMatchers
-                .header()
-                .stringValues(HttpHeaders.LOCATION, "http://localhost/users/1");
+        Mockito.when(this.userService.registerUser(Mockito.any())).thenReturn(Optional.of(uri));
 
-        Mockito.when(this.userService.registerUser(Mockito.any())).thenReturn(uri);
-
-        this.mockMvc.perform(mountRequest(this.userRequestDTO)).andExpect(resultMatcher);
+        this.mockMvc.perform(this.mountRequest(userRequestDTO, token))
+                .andExpect(resultMatcherHeader)
+                .andExpect(resultMatcherStatus);
     }
 
     @Test
-    void should_ReceiveResponseStatus400() throws Exception {
+    void shouldReceiveResponseStatus400() throws Exception {
+        final String token = this.makeRequestLoginAndGetToken(this.getAdministratorLoginRequestDTO());
+
         this.mockMvc
-                .perform(mountRequest(new UserRequestDTO()))
+                .perform(mountRequest(new UserRequestDTO(), token))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void shouldMakeRequestAsCommonAndReturnStatusForbidden() throws Exception {
+        final UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setName("common forbidden");
+        userRequestDTO.setPassword("123456789");
+        userRequestDTO.setType(TypeUser.COMMON);
+
+        final String token = this.makeRequestLoginAndGetToken(this.getCommonLoginRequestDTO());
+
+        final ResultMatcher resultMatcher = MockMvcResultMatchers.status().isForbidden();
+        this.mockMvc.perform(this.mountRequest(userRequestDTO, token)).andExpect(resultMatcher);
+    }
+
+    @Test
+    void shouldMakeRequestAsAdministratorRegisterAdministratorAndReturnStatusForbidden() throws Exception {
+        final UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setName("administrator forbidden");
+        userRequestDTO.setPassword("123456789");
+        userRequestDTO.setType(TypeUser.ADMINISTRATOR);
+
+        final String token = this.makeRequestLoginAndGetToken(this.getAdministratorLoginRequestDTO());
+
+        final ResultMatcher resultMatcher = MockMvcResultMatchers.status().isForbidden();
+        this.mockMvc.perform(this.mountRequest(userRequestDTO, token)).andExpect(resultMatcher);
+    }
+
+    @Test
+    void shouldMakeRequestAsMasterRegisterMasterAndReturnStatusForbidden() throws Exception {
+        final UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setName("master forbidden");
+        userRequestDTO.setPassword("123456789");
+        userRequestDTO.setType(TypeUser.MASTER);
+
+        final String token = this.makeRequestLoginAndGetToken(this.getMasterLoginRequestDTO());
+
+        final ResultMatcher resultMatcher = MockMvcResultMatchers.status().isForbidden();
+        this.mockMvc.perform(this.mountRequest(userRequestDTO, token)).andExpect(resultMatcher);
+    }
+
+    @Test
+    void shouldMakeRequestAsMasterRegisterCommonAndReceiveResponseStatus201WithHeaderLocation() throws Exception {
+        final UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setName("common");
+        userRequestDTO.setPassword("123456789");
+        userRequestDTO.setType(TypeUser.COMMON);
+
+        final String token = this.makeRequestLoginAndGetToken(this.getMasterLoginRequestDTO());
+
+        final ResultMatcher resultMatcherStatus = MockMvcResultMatchers
+                .status()
+                .isCreated();
+        final ResultMatcher resultMatcherHeader = MockMvcResultMatchers
+                .header()
+                .stringValues(HttpHeaders.LOCATION, "http://localhost/users/1");
+
+        final URI uri = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host("localhost")
+                .path("users/1")
+                .build()
+                .toUri();
+
+        Mockito.when(this.userService.registerUser(Mockito.any())).thenReturn(Optional.of(uri));
+
+        this.mockMvc.perform(this.mountRequest(userRequestDTO, token))
+                .andExpect(resultMatcherHeader)
+                .andExpect(resultMatcherStatus);
     }
 }

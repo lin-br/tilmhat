@@ -12,6 +12,7 @@ public class UserEntityBuilder {
     private LocalDateTime created_at;
     private LocalDateTime modified_at;
     private LocalDateTime deleted_at;
+    private UserEntity parent;
 
     private UserEntityBuilder() {
     }
@@ -60,6 +61,11 @@ public class UserEntityBuilder {
         return this;
     }
 
+    public UserEntityBuilder setParent(UserEntity parent) {
+        this.parent = parent;
+        return this;
+    }
+
     public UserEntity build() {
         return new UserEntity(
                 this.id,
@@ -69,7 +75,8 @@ public class UserEntityBuilder {
                 this.type,
                 this.created_at,
                 this.modified_at,
-                this.deleted_at
+                this.deleted_at,
+                this.parent
         );
     }
 }

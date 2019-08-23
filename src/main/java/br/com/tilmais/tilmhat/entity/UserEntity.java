@@ -41,11 +41,14 @@ public final class UserEntity {
 
     private LocalDateTime deleted_at;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private UserEntity parent;
+
     UserEntity() {
 
     }
 
-    UserEntity(Long id, String name, String password, SituationUser situation, TypeUser type, LocalDateTime created_at, LocalDateTime modified_at, LocalDateTime deleted_at) {
+    UserEntity(Long id, String name, String password, SituationUser situation, TypeUser type, LocalDateTime created_at, LocalDateTime modified_at, LocalDateTime deleted_at, UserEntity parent) {
         this.id = id;
         this.name = name;
         this.password = password;
@@ -54,6 +57,7 @@ public final class UserEntity {
         this.created_at = created_at;
         this.modified_at = modified_at;
         this.deleted_at = deleted_at;
+        this.parent = parent;
     }
 
     public Long getId() {
@@ -120,4 +124,11 @@ public final class UserEntity {
         this.deleted_at = deleted_at;
     }
 
+    public UserEntity getParent() {
+        return parent;
+    }
+
+    void setParent(UserEntity parent) {
+        this.parent = parent;
+    }
 }

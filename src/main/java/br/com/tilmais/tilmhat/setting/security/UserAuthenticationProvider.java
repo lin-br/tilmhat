@@ -10,8 +10,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 
 @Service
 public class UserAuthenticationProvider implements AuthenticationProvider {
@@ -39,7 +42,8 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         final UserEntity user = this.repository.findByName(username);
 
         if (user != null && BCrypt.checkpw(password, user.getPassword())) {
-            return new UsernamePasswordAuthenticationToken(user.getId(), user.getPassword());
+            return new UsernamePasswordAuthenticationToken(user.getId(), user.getPassword(),
+                    Collections.singleton(new SimpleGrantedAuthority(user.getType().name())));
         }
         throw new BadCredentialsException("Username or password not found");
     }

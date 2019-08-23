@@ -14,6 +14,8 @@ class UserEntityBuilderTest {
 
     @Test
     void shouldFillTheEntireEntity() {
+        final UserEntity parent = UserEntityBuilder.builder().build();
+
         final UserEntity userEntity = UserEntityBuilder.builder()
                 .setId(1L)
                 .setName("Test Builder")
@@ -23,6 +25,7 @@ class UserEntityBuilderTest {
                 .setCreated_at(LocalDateTime.now())
                 .setModified_at(LocalDateTime.now())
                 .setDeleted_at(LocalDateTime.now())
+                .setParent(parent)
                 .build();
 
         final Method[] declaredMethods = UserEntity.class.getDeclaredMethods();
