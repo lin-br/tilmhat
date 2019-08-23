@@ -16,6 +16,7 @@ caso ele não esteja instalado, siga o tutorial do próprio site: [Maven install
  - [`Docker Community 18.09.2`](https://www.docker.com) - Executa e gerencia aplicações dentro de invólucros chamados containers
  - [`RabbitMQ 3.7.16`](https://www.rabbitmq.com) - RabbitMQ é um broker de mensageria
  - [`jUnit5 e Mockito`](https://junit.org/junit5/) - Execução de testes
+ - [`H2 Database Engine 1.4.199`](https://mvnrepository.com/artifact/com.h2database/h2) - Banco de dados em memória para testes.
 
 ### Contribuição
 
