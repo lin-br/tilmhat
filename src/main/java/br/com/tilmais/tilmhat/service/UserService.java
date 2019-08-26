@@ -5,10 +5,9 @@ import br.com.tilmais.tilmhat.entity.TypeUser;
 import br.com.tilmais.tilmhat.entity.UserEntity;
 import br.com.tilmais.tilmhat.repository.UserRepository;
 import br.com.tilmais.tilmhat.util.GeneratorURI;
+import br.com.tilmais.tilmhat.util.SecurityContext;
 import br.com.tilmais.tilmhat.util.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -25,21 +24,20 @@ public class UserService {
     }
 
     public Optional<URI> registerUser(UserRequestDTO dto) {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Long idLogin = SecurityContext.getIdFromAuthentication();
+        final TypeUser authority = SecurityContext.getAuthorityFromAuthentication();
 
-        String id = String.valueOf(authentication.getPrincipal());
-
-        final Optional<UserEntity> optionalUser = this.userRepository.findById(Long.parseLong(id));
+        final Optional<UserEntity> optionalUser = this.userRepository.findById(idLogin);
 
         if (optionalUser.isPresent()) {
 
             final UserEntity userEntity = optionalUser.get();
 
-            if (userEntity.getType().equals(TypeUser.ADMINISTRATOR) && dto.getType().equals(TypeUser.MASTER)) {
+            if (authority.equals(TypeUser.ADMINISTRATOR) && dto.getType().equals(TypeUser.MASTER)) {
                 return Optional.of(GeneratorURI.getUriFromCurrentRequestAddId(
                         this.userRepository.save(UserMapper.entityFromRequestDTO(dto, userEntity)).getId()));
 
-            } else if (userEntity.getType().equals(TypeUser.MASTER) && dto.getType().equals(TypeUser.COMMON)) {
+            } else if (authority.equals(TypeUser.MASTER) && dto.getType().equals(TypeUser.COMMON)) {
                 return Optional.of(GeneratorURI.getUriFromCurrentRequestAddId(
                         this.userRepository.save(UserMapper.entityFromRequestDTO(dto, userEntity)).getId()));
             }
