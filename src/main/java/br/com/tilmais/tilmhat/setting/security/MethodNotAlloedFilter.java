@@ -1,5 +1,7 @@
 package br.com.tilmais.tilmhat.setting.security;
 
+import br.com.tilmais.tilmhat.setting.ApplicationConstants;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,6 +16,10 @@ import java.util.Collections;
 
 @Component
 public class MethodNotAlloedFilter extends OncePerRequestFilter {
+
+    @Value("${server.servlet.context-path}")
+    private String path;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -23,7 +29,8 @@ public class MethodNotAlloedFilter extends OncePerRequestFilter {
         final String method = request.getMethod();
         final String requestURI = request.getRequestURI();
 
-        if (!method.equals(HttpMethod.POST.name())) {
+        if (requestURI.equals(this.path.concat(ApplicationConstants.AUTHENTICATION_PATH)) &&
+                !method.equals(HttpMethod.POST.name())) {
             throw new MethodNotAllowedException(method, Collections.singleton(HttpMethod.POST));
         }
 
