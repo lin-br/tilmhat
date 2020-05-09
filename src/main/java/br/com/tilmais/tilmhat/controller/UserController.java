@@ -16,10 +16,10 @@ import java.io.Serializable;
 import java.net.URI;
 
 @RestController
-@RequestMapping(UserController.PATH_PARENT)
+@RequestMapping(UserController.USER_PATH)
 class UserController {
 
-    static final String PATH_PARENT = "/users";
+    static final String USER_PATH = "/users";
 
     private final UserService userService;
 

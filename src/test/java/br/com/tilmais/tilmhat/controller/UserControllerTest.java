@@ -1,5 +1,6 @@
 package br.com.tilmais.tilmhat.controller;
 
+import br.com.tilmais.tilmhat.TilmhatApplicationTest;
 import br.com.tilmais.tilmhat.dto.LoginRequestDTO;
 import br.com.tilmais.tilmhat.dto.UserRequestDTO;
 import br.com.tilmais.tilmhat.entity.TypeUser;
@@ -7,7 +8,6 @@ import br.com.tilmais.tilmhat.entity.UserEntity;
 import br.com.tilmais.tilmhat.entity.UserEntityBuilder;
 import br.com.tilmais.tilmhat.repository.UserRepository;
 import br.com.tilmais.tilmhat.service.UserService;
-import br.com.tilmais.tilmhat.setting.ApplicationConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,10 +31,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Optional;
 
+import static br.com.tilmais.tilmhat.ApplicationSecurityConfig.AUTHENTICATION_PATH;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles(ApplicationConstants.PROFILE_TEST)
+@ActiveProfiles(TilmhatApplicationTest.PROFILE_TEST)
 class UserControllerTest {
 
     @Autowired
@@ -51,7 +53,7 @@ class UserControllerTest {
 
     private String makeRequestLoginAndGetToken(LoginRequestDTO loginRequestDTO) throws Exception {
         final MockHttpServletRequestBuilder mockRequestLogin = MockMvcRequestBuilders
-                .post(ApplicationConstants.AUTHENTICATION_PATH)
+                .post(AUTHENTICATION_PATH)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(this.objectMapper.writeValueAsString(loginRequestDTO));
 
@@ -64,7 +66,7 @@ class UserControllerTest {
 
     private MockHttpServletRequestBuilder mountRequest(UserRequestDTO userRequestDTO, String token) throws Exception {
         return MockMvcRequestBuilders
-                .post(UserController.PATH_PARENT)
+                .post(UserController.USER_PATH)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .content(objectMapper.writeValueAsString(userRequestDTO));
@@ -131,7 +133,7 @@ class UserControllerTest {
         final ResultMatcher unauthorized = MockMvcResultMatchers.status().isUnauthorized();
 
         final MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(UserController.PATH_PARENT)
+                .post(UserController.USER_PATH)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(this.objectMapper.writeValueAsString(userRequestDTO));
 

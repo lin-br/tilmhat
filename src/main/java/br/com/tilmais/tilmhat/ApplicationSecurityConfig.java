@@ -1,6 +1,5 @@
 package br.com.tilmais.tilmhat;
 
-import br.com.tilmais.tilmhat.setting.ApplicationConstants;
 import br.com.tilmais.tilmhat.setting.ApplicationProperties;
 import br.com.tilmais.tilmhat.setting.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
+public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    public static final String AUTHENTICATION_PATH = "/login";
 
     private final UserAuthenticationProvider userAuthenticationProvider;
     private final MethodNotAllowedFilter methodNotAllowedFilter;
@@ -57,7 +58,7 @@ class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(HttpMethod.POST, ApplicationConstants.AUTHENTICATION_PATH).permitAll()
+                .antMatchers(HttpMethod.POST, AUTHENTICATION_PATH).permitAll()
                 .anyRequest()
                 .authenticated();
     }
