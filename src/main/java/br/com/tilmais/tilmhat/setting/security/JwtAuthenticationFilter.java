@@ -21,10 +21,10 @@ import java.util.List;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private ApplicationProperties applicationProperties;
+    private final ApplicationProperties applicationProperties;
 
     @Autowired
-    public JwtAuthenticationFilter(ApplicationProperties applicationProperties) {
+    JwtAuthenticationFilter(final ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
     }
 

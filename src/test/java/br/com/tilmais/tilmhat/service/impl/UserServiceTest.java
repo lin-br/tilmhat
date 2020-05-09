@@ -1,4 +1,4 @@
-package br.com.tilmais.tilmhat.service;
+package br.com.tilmais.tilmhat.service.impl;
 
 import br.com.tilmais.tilmhat.entity.TypeUser;
 import br.com.tilmais.tilmhat.entity.UserEntity;
@@ -28,7 +28,8 @@ import java.util.Optional;
 class UserServiceTest {
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
+
     @Autowired
     private UserRepository userRepository;
 

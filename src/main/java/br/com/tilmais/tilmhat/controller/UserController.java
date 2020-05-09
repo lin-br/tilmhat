@@ -12,26 +12,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(UserController.PATH_PARENT)
-public class UserController {
+class UserController {
 
     static final String PATH_PARENT = "/users";
 
-    private UserService userService;
+    private final UserService userService;
 
-    public UserController(UserService userService) {
+    UserController(final UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('ADMINISTRATOR','MASTER')")
-    public ResponseEntity register(@Valid @RequestBody UserRequestDTO dto) {
-        final Optional<URI> optionalURI = this.userService.registerUser(dto);
-        if (optionalURI.isPresent()) return ResponseEntity.created(optionalURI.get()).build();
+    public ResponseEntity<Serializable> register(@Valid @RequestBody final UserRequestDTO dto) {
+        return this.userService.registerUser(dto)
+                .map(this::getCreated)
+                .orElseGet(this::getForbidden);
+    }
+
+    private ResponseEntity<Serializable> getForbidden() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    private ResponseEntity<Serializable> getCreated(final URI uri) {
+        return ResponseEntity.created(uri).build();
     }
 }

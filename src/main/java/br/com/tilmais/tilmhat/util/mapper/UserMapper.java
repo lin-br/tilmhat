@@ -6,6 +6,8 @@ import br.com.tilmais.tilmhat.entity.UserEntityBuilder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class UserMapper {
+    private UserMapper() {
+    }
 
     public static UserEntity entityFromRequestDTO(UserRequestDTO dto, UserEntity parent) {
         return UserEntityBuilder.builder()

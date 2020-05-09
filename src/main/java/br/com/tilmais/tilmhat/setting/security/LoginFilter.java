@@ -27,9 +27,10 @@ import java.time.ZoneId;
 
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
-    private ApplicationProperties applicationProperties;
+    private final ApplicationProperties applicationProperties;
 
-    public LoginFilter(AuthenticationManager authenticationManager, ApplicationProperties applicationProperties) {
+    public LoginFilter(final AuthenticationManager authenticationManager,
+                       final ApplicationProperties applicationProperties) {
         super(new AntPathRequestMatcher(ApplicationConstants.AUTHENTICATION_PATH, HttpMethod.POST.name()));
         this.setAuthenticationManager(authenticationManager);
         this.applicationProperties = applicationProperties;
@@ -57,7 +58,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
                                               AuthenticationException failed) {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setHeader(UnauthorizedUtil.WWWAuthenticate, UnauthorizedUtil.getWWWAuthenticateMessage(request, failed));
+        response.setHeader(UnauthorizedUtil.WWW_AUTHENTICATE, UnauthorizedUtil.getWWWAuthenticateMessage(request, failed));
     }
 
     @Override
