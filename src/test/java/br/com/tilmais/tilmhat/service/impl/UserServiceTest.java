@@ -1,9 +1,9 @@
-package br.com.tilmais.tilmhat.service;
+package br.com.tilmais.tilmhat.service.impl;
 
+import br.com.tilmais.tilmhat.TilmhatApplicationTest;
 import br.com.tilmais.tilmhat.entity.TypeUser;
 import br.com.tilmais.tilmhat.entity.UserEntity;
 import br.com.tilmais.tilmhat.repository.UserRepository;
-import br.com.tilmais.tilmhat.setting.ApplicationConstants;
 import br.com.tilmais.tilmhat.util.BuilderUserEntityToTests;
 import br.com.tilmais.tilmhat.util.BuilderUserRequestDtoToTests;
 import org.junit.jupiter.api.AfterEach;
@@ -24,11 +24,12 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
-@ActiveProfiles(ApplicationConstants.PROFILE_TEST)
+@ActiveProfiles(TilmhatApplicationTest.PROFILE_TEST)
 class UserServiceTest {
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
+
     @Autowired
     private UserRepository userRepository;
 

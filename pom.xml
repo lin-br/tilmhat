@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.tilmais</groupId>
     <artifactId>tilmhat</artifactId>
-    <version>0.0.0</version>
+    <version>1.0.0</version>
     <name>tilmhat</name>
     <description>API do Tilmaht - Um projeto para brincar com o Framework Spring e o broker RabbitMQ</description>
 

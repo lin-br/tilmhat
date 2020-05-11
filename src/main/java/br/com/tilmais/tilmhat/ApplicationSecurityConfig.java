@@ -1,6 +1,5 @@
 package br.com.tilmais.tilmhat;
 
-import br.com.tilmais.tilmhat.setting.ApplicationConstants;
 import br.com.tilmais.tilmhat.setting.ApplicationProperties;
 import br.com.tilmais.tilmhat.setting.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +18,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private UserAuthenticationProvider userAuthenticationProvider;
-    private MethodNotAlloedFilter methodNotAlloedFilter;
-    private ApplicationProperties applicationProperties;
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-    private ExceptionHandlerFilter exceptionHandlerFilter;
+    public static final String AUTHENTICATION_PATH = "/login";
+
+    private final UserAuthenticationProvider userAuthenticationProvider;
+    private final MethodNotAllowedFilter methodNotAllowedFilter;
+    private final ApplicationProperties applicationProperties;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Autowired
-    public ApplicationSecurityConfig(UserAuthenticationProvider userAuthenticationProvider,
-                                     MethodNotAlloedFilter methodNotAlloedFilter,
-                                     JwtAuthenticationFilter jwtAuthenticationFilter,
-                                     ExceptionHandlerFilter exceptionHandlerFilter,
-                                     ApplicationProperties applicationProperties) {
+    ApplicationSecurityConfig(final UserAuthenticationProvider userAuthenticationProvider,
+                              final MethodNotAllowedFilter methodNotAllowedFilter,
+                              final JwtAuthenticationFilter jwtAuthenticationFilter,
+                              final ExceptionHandlerFilter exceptionHandlerFilter,
+                              final ApplicationProperties applicationProperties) {
         this.userAuthenticationProvider = userAuthenticationProvider;
-        this.methodNotAlloedFilter = methodNotAlloedFilter;
+        this.methodNotAllowedFilter = methodNotAllowedFilter;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.exceptionHandlerFilter = exceptionHandlerFilter;
         this.applicationProperties = applicationProperties;
@@ -44,21 +45,20 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
+    protected void configure(final AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(this.userAuthenticationProvider);
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+    protected void configure(final HttpSecurity http) throws Exception {
+        http.csrf().disable()
                 .addFilterBefore(this.exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(this.methodNotAlloedFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(this.methodNotAllowedFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(this.getLoginFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers(HttpMethod.POST, ApplicationConstants.AUTHENTICATION_PATH).permitAll()
+                .antMatchers(HttpMethod.POST, AUTHENTICATION_PATH).permitAll()
                 .anyRequest()
                 .authenticated();
     }

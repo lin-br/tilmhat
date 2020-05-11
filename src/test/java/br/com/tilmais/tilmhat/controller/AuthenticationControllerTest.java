@@ -1,7 +1,7 @@
 package br.com.tilmais.tilmhat.controller;
 
+import br.com.tilmais.tilmhat.TilmhatApplicationTest;
 import br.com.tilmais.tilmhat.dto.LoginRequestDTO;
-import br.com.tilmais.tilmhat.setting.ApplicationConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +15,12 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static br.com.tilmais.tilmhat.ApplicationSecurityConfig.AUTHENTICATION_PATH;
+
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles(ApplicationConstants.PROFILE_TEST)
-class LoginControllerTest {
+@ActiveProfiles(TilmhatApplicationTest.PROFILE_TEST)
+class AuthenticationControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -33,7 +35,7 @@ class LoginControllerTest {
         loginRequestDTO.setPassword("123456789");
 
         final MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(ApplicationConstants.AUTHENTICATION_PATH)
+                .post(AUTHENTICATION_PATH)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(this.objectMapper.writeValueAsString(loginRequestDTO));
 
@@ -45,7 +47,7 @@ class LoginControllerTest {
     @Test
     void shouldGetStatusMethodNotAllowed() throws Exception {
         final MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(ApplicationConstants.AUTHENTICATION_PATH)
+                .get(AUTHENTICATION_PATH)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content("");
 

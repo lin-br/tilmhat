@@ -1,20 +1,23 @@
-package br.com.tilmais.tilmhat.service.token;
+package br.com.tilmais.tilmhat.service.token.jwt;
 
+import br.com.tilmais.tilmhat.service.token.TokenDecoder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class JwtDecoder implements TokenDecoder {
 
-    private String nameOfListGrantedAuthority;
-    private Claims claims;
+    private final String nameOfListGrantedAuthority;
+    private final Claims claims;
 
-    JwtDecoder(String jwt, String keySecret, String nameOfListGrantedAuthority) {
+    public JwtDecoder(final String jwt,
+                      final String keySecret,
+                      final String nameOfListGrantedAuthority) {
         this.claims = Jwts.parser().setSigningKey(keySecret).parseClaimsJws(jwt).getBody();
         this.nameOfListGrantedAuthority = nameOfListGrantedAuthority;
     }
@@ -27,7 +30,7 @@ public class JwtDecoder implements TokenDecoder {
             return list.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         }
 
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override

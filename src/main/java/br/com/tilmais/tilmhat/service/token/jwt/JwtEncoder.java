@@ -1,5 +1,6 @@
-package br.com.tilmais.tilmhat.service.token;
+package br.com.tilmais.tilmhat.service.token.jwt;
 
+import br.com.tilmais.tilmhat.service.token.TokenEncoder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -15,16 +16,19 @@ import java.util.stream.Collectors;
 
 public class JwtEncoder implements TokenEncoder {
 
-    private String nameOfListGrantedAuthority;
-    private String keySecret;
+    private final String nameOfListGrantedAuthority;
+    private final String keySecret;
 
-    JwtEncoder(String nameOfListGrantedAuthority, String keySecret) {
+    public JwtEncoder(final String nameOfListGrantedAuthority,
+                      final String keySecret) {
         this.nameOfListGrantedAuthority = nameOfListGrantedAuthority;
         this.keySecret = keySecret;
     }
 
     @Override
-    public String getToken(String sub, LocalDateTime expirationDate, Collection<? extends GrantedAuthority> authorityList) {
+    public String getToken(final String sub,
+                           final LocalDateTime expirationDate,
+                           final Collection<? extends GrantedAuthority> authorityList) {
         Claims claims = Jwts
                 .claims()
                 .setIssuedAt(Date.from(Instant.now().atZone(ZoneId.systemDefault()).toInstant()))

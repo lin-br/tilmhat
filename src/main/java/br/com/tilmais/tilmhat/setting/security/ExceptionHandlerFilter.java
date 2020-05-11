@@ -27,7 +27,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         } catch (JwtException e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            response.setHeader(UnauthorizedUtil.WWWAuthenticate, UnauthorizedUtil.getWWWAuthenticateMessage(request, e));
+            response.setHeader(UnauthorizedUtil.WWW_AUTHENTICATE, UnauthorizedUtil.getWWWAuthenticateMessage(request, e));
         } catch (MethodNotAllowedException e) {
             response.setStatus(e.getStatus().value());
         }

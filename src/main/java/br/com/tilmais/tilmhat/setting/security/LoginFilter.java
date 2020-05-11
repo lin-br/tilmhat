@@ -3,7 +3,6 @@ package br.com.tilmais.tilmhat.setting.security;
 import br.com.tilmais.tilmhat.dto.LoginRequestDTO;
 import br.com.tilmais.tilmhat.service.token.TokenEncoder;
 import br.com.tilmais.tilmhat.service.token.TokenFactory;
-import br.com.tilmais.tilmhat.setting.ApplicationConstants;
 import br.com.tilmais.tilmhat.setting.ApplicationProperties;
 import br.com.tilmais.tilmhat.util.UnauthorizedUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,12 +24,16 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import static br.com.tilmais.tilmhat.ApplicationSecurityConfig.AUTHENTICATION_PATH;
+
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
-    private ApplicationProperties applicationProperties;
 
-    public LoginFilter(AuthenticationManager authenticationManager, ApplicationProperties applicationProperties) {
-        super(new AntPathRequestMatcher(ApplicationConstants.AUTHENTICATION_PATH, HttpMethod.POST.name()));
+    private final ApplicationProperties applicationProperties;
+
+    public LoginFilter(final AuthenticationManager authenticationManager,
+                       final ApplicationProperties applicationProperties) {
+        super(new AntPathRequestMatcher(AUTHENTICATION_PATH, HttpMethod.POST.name()));
         this.setAuthenticationManager(authenticationManager);
         this.applicationProperties = applicationProperties;
     }
@@ -57,7 +60,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
                                               AuthenticationException failed) {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setHeader(UnauthorizedUtil.WWWAuthenticate, UnauthorizedUtil.getWWWAuthenticateMessage(request, failed));
+        response.setHeader(UnauthorizedUtil.WWW_AUTHENTICATE, UnauthorizedUtil.getWWWAuthenticateMessage(request, failed));
     }
 
     @Override
